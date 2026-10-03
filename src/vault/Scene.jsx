@@ -29,12 +29,19 @@ const clamp01 = (x) => Math.min(1, Math.max(0, x));
 const seg = (t, a, b) => clamp01((t - a) / (b - a));
 const easeIO = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
+// camera distance so the full shelf width (badges at x = ±1.6) fits on any aspect ratio
+const camZ = (a = 1.78) => {
+  const fov = a < 1 ? Math.min(75, 45 + (1 - a) * 45) : 45;
+  const d = Math.min(7.5, Math.max(3.55, 2.2 / (Math.tan((fov * Math.PI) / 360) * a)));
+  return -8.45 + d;
+};
+
 const POSES = {
   front: () => ({ pos: [0, 0, 8.5], target: [0, 0, 0] }),
   overview: (a) => ({ pos: [0, 0.1, a < 0.8 ? -1.0 : -1.3], target: [0, -0.1, -9] }),
-  gold: () => ({ pos: [0, 1.4, -5.0], target: [0, 1.45, -9] }),
-  foreign: () => ({ pos: [0, -0.1, -5.0], target: [0, 0.0, -9] }),
-  local: () => ({ pos: [0, -1.5, -5.0], target: [0, -1.5, -9] }),
+  gold: (a) => ({ pos: [0, 1.4, camZ(a)], target: [0, 1.45, -9] }),
+  foreign: (a) => ({ pos: [0, -0.1, camZ(a)], target: [0, 0.0, -9] }),
+  local: (a) => ({ pos: [0, -1.5, camZ(a)], target: [0, -1.5, -9] }),
   boxes: () => ({ pos: [0.6, 0, -3.8], target: [3.5, 0, -6.5] }),
 };
 export const getPose = (focus, aspect) => (POSES[focus] || POSES.overview)(aspect);
@@ -275,7 +282,7 @@ function GoldBars({ count }) {
   const stampRef = useRef();
   const { geo, height } = useMemo(() => makeBarGeometry(), []);
   const stamp = useMemo(() => stampTexture(), []);
-  const STEP = 0.15;
+  const STEP = 0.125;
   const spots = useMemo(() => {
     const rows = barRows(count), out = [];
     for (let r = 0; r < rows && out.length < count; r++) {
