@@ -6,7 +6,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame, useThree } from '@react-three/fiber';
-import { CameraControls, Environment, Html, Lightformer, Sparkles } from '@react-three/drei';
+import { CameraControls, Environment, Lightformer, Sparkles } from '@react-three/drei';
 import { T } from './sound';
 import {
   brushedTexture, floorTexture, dialTexture, screenTexture, stampTexture, plaqueTexture,
@@ -371,16 +371,34 @@ function CurrencyGroup({ x, shelf, amount, code, tex }) {
   );
 }
 
+function badgeTexture(title, value, sub, accent) {
+  const c = document.createElement('canvas'); c.width = 512; c.height = 240;
+  const g = c.getContext('2d');
+  const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+  rr(8, 8, 496, 224, 34);
+  const bg = g.createLinearGradient(0, 0, 0, 240); bg.addColorStop(0, 'rgba(38,42,50,.92)'); bg.addColorStop(1, 'rgba(10,12,16,.92)');
+  g.fillStyle = bg; g.fill();
+  g.lineWidth = 5; g.strokeStyle = accent; g.stroke();
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillStyle = accent; g.font = 'bold 34px Arial'; g.fillText(title, 256, 52);
+  g.fillStyle = '#fff4cf'; g.font = 'bold 86px Arial'; g.fillText(value, 256, 130);
+  if (sub) { g.fillStyle = '#b9b19a'; g.font = '32px Arial'; g.fillText(sub, 256, 196); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  return t;
+}
+
 function Badge({ position, title, value, sub, accent = '#d9b25a', open }) {
+  const mat = useRef();
+  const map = useMemo(() => badgeTexture(title, value, sub, accent), [title, value, sub, accent]);
+  useEffect(() => () => map.dispose(), [map]);
+  useFrame((_, dt) => {
+    if (mat.current) mat.current.opacity += ((open ? 1 : 0) - mat.current.opacity) * (1 - Math.exp(-dt * 4));
+  });
   return (
-    <Html position={position} center distanceFactor={6} zIndexRange={[10, 0]}
-      style={{ pointerEvents: 'none', opacity: open ? 1 : 0, transition: 'opacity .8s ease .5s' }}>
-      <div className="vd-badge" style={{ '--accent': accent }}>
-        <small>{title}</small>
-        <strong>{value}</strong>
-        {sub && <span>{sub}</span>}
-      </div>
-    </Html>
+    <mesh position={position} renderOrder={20}>
+      <planeGeometry args={[0.84, 0.394]} />
+      <meshBasicMaterial ref={mat} map={map} transparent opacity={0} depthWrite={false} toneMapped={false} />
+    </mesh>
   );
 }
 
