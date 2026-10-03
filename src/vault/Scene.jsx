@@ -421,9 +421,9 @@ function Treasury({ data, open, locale, t }) {
       <CurrencyGroup x={-1.3} shelf="local" amount={a.sar} code="SAR" tex={notes.SAR} />
       <CurrencyGroup x={1.3} shelf="local" amount={a.egp} code="EGP" tex={notes.EGP} />
 
-      <Badge open={open} position={[-1.75, topG + 0.6, BZ]} title="GOLD 24K" value={`${gv(a.g24)} g`} accent="#f3dc9c"
+      <Badge open={open} position={[-1.3, topG + 0.62, BZ]} title="GOLD 24K" value={`${gv(a.g24)} g`} accent="#f3dc9c"
         sub={`≈ ${f((a.g24 || 0) * (gp.g24 || 0))} ${t('b_total')}`} />
-      <Badge open={open} position={[1.75, topG + 0.6, BZ]} title="GOLD 21K" value={`${gv(a.g21)} g`} accent="#e8b860"
+      <Badge open={open} position={[1.3, topG + 0.62, BZ]} title="GOLD 21K" value={`${gv(a.g21)} g`} accent="#e8b860"
         sub={`≈ ${f((a.g21 || 0) * (gp.g21 || 0))} ${t('b_total')}`} />
       <Badge open={open} position={[-1.3, bY('foreign'), BZ]} title="USD" value={f(a.usd)} accent="#9bbd8a"
         sub={`≈ ${f(eqEGP(a.usd, rates.USD, 50.5))} ${t('b_total')}`} />
