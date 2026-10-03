@@ -29,10 +29,10 @@ const clamp01 = (x) => Math.min(1, Math.max(0, x));
 const seg = (t, a, b) => clamp01((t - a) / (b - a));
 const easeIO = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
-// camera distance so the full shelf width (badges at x = ±1.6) fits on any aspect ratio
+// camera distance so the full shelf width (badges at x = ±1.75) fits on any aspect ratio
 const camZ = (a = 1.78) => {
   const fov = a < 1 ? Math.min(75, 45 + (1 - a) * 45) : 45;
-  const d = Math.min(7.5, Math.max(3.55, 2.2 / (Math.tan((fov * Math.PI) / 360) * a)));
+  const d = Math.min(7.5, Math.max(3.55, 2.4 / (Math.tan((fov * Math.PI) / 360) * a)));
   return -8.45 + d;
 };
 
@@ -399,7 +399,7 @@ function Treasury({ data, open, locale, t }) {
   const topG = shelfTop('gold');
   const gp = data.gold || {};
   const gv = (n) => (n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 });
-  const bY = (k) => shelfTop(k) + 0.78;
+  const bY = (k) => shelfTop(k) + 1.0;
   const BZ = SHELF_Z + 0.45;
   const eqEGP = (amt, r, fallback) => (amt || 0) * (r || fallback);
 
@@ -421,9 +421,9 @@ function Treasury({ data, open, locale, t }) {
       <CurrencyGroup x={-1.3} shelf="local" amount={a.sar} code="SAR" tex={notes.SAR} />
       <CurrencyGroup x={1.3} shelf="local" amount={a.egp} code="EGP" tex={notes.EGP} />
 
-      <Badge open={open} position={[-1.6, topG + 0.45, BZ]} title="GOLD 24K" value={`${gv(a.g24)} g`} accent="#f3dc9c"
+      <Badge open={open} position={[-1.75, topG + 0.6, BZ]} title="GOLD 24K" value={`${gv(a.g24)} g`} accent="#f3dc9c"
         sub={`≈ ${f((a.g24 || 0) * (gp.g24 || 0))} ${t('b_total')}`} />
-      <Badge open={open} position={[1.6, topG + 0.45, BZ]} title="GOLD 21K" value={`${gv(a.g21)} g`} accent="#e8b860"
+      <Badge open={open} position={[1.75, topG + 0.6, BZ]} title="GOLD 21K" value={`${gv(a.g21)} g`} accent="#e8b860"
         sub={`≈ ${f((a.g21 || 0) * (gp.g21 || 0))} ${t('b_total')}`} />
       <Badge open={open} position={[-1.3, bY('foreign'), BZ]} title="USD" value={f(a.usd)} accent="#9bbd8a"
         sub={`≈ ${f(eqEGP(a.usd, rates.USD, 50.5))} ${t('b_total')}`} />
