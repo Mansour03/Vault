@@ -163,7 +163,7 @@ export default function VaultDashboard() {
     <div className="vd-root" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       <style>{CSS}</style>
 
-      <Canvas dpr={[1, isMobile ? 1.5 : 1.75]} camera={{ fov: 45, near: 0.1, far: 60, position: [0, 0, 8.5] }}
+      <Canvas dir="ltr" style={{ direction: 'ltr' }} dpr={[1, isMobile ? 1.5 : 1.75]} camera={{ fov: 45, near: 0.1, far: 60, position: [0, 0, 8.5] }}
         gl={{ antialias: true, powerPreference: 'high-performance' }}>
         <Suspense fallback={null}>
           <Scene tl={tl} phase={phase} focus={focus} onState={onState} data={data} shift={shift}
